@@ -4,6 +4,7 @@ import {
   Container,
   FormLabel,
   Input,
+  useToast,
 } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import React from 'react';
@@ -32,9 +33,30 @@ const onSubmitUser = async (user: User): Promise<{ id: string }> => {
 };
 
 function App() {
+  const toast = useToast();
   const { handleSubmit, getFieldProps, resetForm, isSubmitting } = useFormik({
     initialValues: initialUser,
-    onSubmit: onSubmitUser,
+    onSubmit: (values) =>
+      onSubmitUser(values)
+        .then(() => {
+          toast({
+            title: 'User Submitted',
+            description: 'User was successfully submitted.',
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .catch(() => {
+          toast({
+            title: 'Failed to Submit',
+            description:
+              'An error happened while submitting, please try again.',
+            status: 'error',
+            duration: 10000,
+            isClosable: true,
+          });
+        }),
   });
   const handleReset: React.MouseEventHandler = React.useCallback(() => {
     resetForm();
