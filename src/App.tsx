@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   ButtonGroup,
   Container,
@@ -34,7 +35,14 @@ const onSubmitUser = async (user: User): Promise<{ id: string }> => {
 
 function App() {
   const toast = useToast();
-  const { handleSubmit, getFieldProps, resetForm, isSubmitting } = useFormik({
+  const {
+    handleSubmit,
+    getFieldProps,
+    resetForm,
+    isSubmitting,
+    initialValues,
+    values,
+  } = useFormik({
     initialValues: initialUser,
     onSubmit: (values) =>
       onSubmitUser(values)
@@ -61,8 +69,20 @@ function App() {
   const handleReset: React.MouseEventHandler = React.useCallback(() => {
     resetForm();
   }, [resetForm]);
+  const hasUpdates = React.useMemo(() => {
+    return Object.entries(values).some(
+      ([key, value]) => value !== initialValues[key as keyof User],
+    );
+  }, [initialValues, values]);
   return (
     <Container className="App" marginTop={16}>
+      <Alert
+        status="warning"
+        style={{ visibility: hasUpdates ? 'hidden' : 'visible' }}
+        marginBottom={8}
+      >
+        Please fill in the form
+      </Alert>
       <form onSubmit={handleSubmit}>
         <FormLabel>
           First Name
@@ -81,7 +101,12 @@ function App() {
           <Input type="email" {...getFieldProps('email')} />
         </FormLabel>
         <ButtonGroup>
-          <Button type="submit" colorScheme="blue" isLoading={isSubmitting}>
+          <Button
+            type="submit"
+            colorScheme="blue"
+            isLoading={isSubmitting}
+            disabled={!hasUpdates}
+          >
             Submit
           </Button>
           <Button onClick={handleReset} variant="outline" colorScheme="pink">
