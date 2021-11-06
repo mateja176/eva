@@ -86,19 +86,27 @@ function App() {
       <form onSubmit={handleSubmit}>
         <FormLabel>
           First Name
-          <Input type="text" {...getFieldProps('firstName')} />
+          <Input
+            {...getFieldProps('firstName')}
+            type="text"
+            placeholder="John"
+          />
         </FormLabel>
         <FormLabel>
           Last Name
-          <Input type="text" {...getFieldProps('lastName')} />
+          <Input {...getFieldProps('lastName')} type="text" placeholder="Doe" />
         </FormLabel>
         <FormLabel>
           Age
-          <Input type="number" {...getFieldProps('age')} />
+          <Input {...getFieldProps('age')} type="number" placeholder="30" />
         </FormLabel>
         <FormLabel>
           Email
-          <Input type="email" {...getFieldProps('email')} />
+          <Input
+            {...getFieldProps('email')}
+            type="email"
+            placeholder="john@doe.com"
+          />
         </FormLabel>
         <ButtonGroup>
           <Button
