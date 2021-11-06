@@ -1,4 +1,12 @@
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  FormLabel,
+  Input,
+} from '@chakra-ui/react';
 import { useFormik } from 'formik';
+import React from 'react';
 import './App.css';
 
 const reactAppApi = process.env.REACT_APP_API;
@@ -14,41 +22,52 @@ const initialUser = {
 };
 type User = typeof initialUser;
 
-const onSubmitUser = (user: User): Promise<{ id: string }> => {
-  return fetch(reactAppApi, {
+const onSubmitUser = async (user: User): Promise<{ id: string }> => {
+  const res = await fetch(reactAppApi, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(user),
-  }).then((res) => res.json());
+  });
+  return await res.json();
 };
 
 function App() {
-  const { handleSubmit, getFieldProps } = useFormik({
+  const { handleSubmit, getFieldProps, resetForm, isSubmitting } = useFormik({
     initialValues: initialUser,
     onSubmit: onSubmitUser,
   });
+  const handleReset: React.MouseEventHandler = React.useCallback(() => {
+    resetForm();
+  }, [resetForm]);
   return (
-    <div className="App">
+    <Container className="App" marginTop={16}>
       <form onSubmit={handleSubmit}>
-        <label>
+        <FormLabel>
           First Name
-          <input type="text" {...getFieldProps('firstName')} />
-        </label>
-        <label>
+          <Input type="text" {...getFieldProps('firstName')} />
+        </FormLabel>
+        <FormLabel>
           Last Name
-          <input type="text" {...getFieldProps('lastName')} />
-        </label>
-        <label>
+          <Input type="text" {...getFieldProps('lastName')} />
+        </FormLabel>
+        <FormLabel>
           Age
-          <input type="number" {...getFieldProps('age')} />
-        </label>
-        <label>
+          <Input type="number" {...getFieldProps('age')} />
+        </FormLabel>
+        <FormLabel>
           Email
-          <input type="email" {...getFieldProps('email')} />
-        </label>
-        <input type="submit" />
+          <Input type="email" {...getFieldProps('email')} />
+        </FormLabel>
+        <ButtonGroup>
+          <Button type="submit" colorScheme="blue" isLoading={isSubmitting}>
+            Submit
+          </Button>
+          <Button onClick={handleReset} variant="outline" colorScheme="pink">
+            Reset
+          </Button>
+        </ButtonGroup>
       </form>
-    </div>
+    </Container>
   );
 }
 
